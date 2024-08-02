@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pj_teste/accordion/accordion_card.dart';
+import 'package:pj_teste/accordion/accordion_card2.dart';
 import 'package:pj_teste/getx/style_getx.dart';
 import 'package:pj_teste/model/pronun.dart';
 import 'package:pj_teste/widget/btn_icon.dart';

@@ -18,13 +18,15 @@ List<AccordionSection> buildListAccordionSection(
       AccordionSection(
         onOpenSection: () {
           play.stopAudios(list[i]);
-          // play.isClosingSection.value = false;
+          play.isClosingSection.value = false;
           isClosingSection.value = false;
+          // play.audioPlayer.stop().then((_) => print('Parou o audio'));
         },
         onCloseSection: () {
           play.stopAudios(list[i]);
           // play.isClosingSection.value = false;
           isClosingSection.value = false;
+          // play.audioPlayer.stop().then((_) => print('Parou o audio'));
         },
         header: AccordionHeader(pronun: list[i]),
         content: AccordionContent(pronun: list[i]),

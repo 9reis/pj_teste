@@ -6,52 +6,39 @@ import 'package:pj_teste/model/tile.dart';
 
 class PlayGetx extends GetxController {
   RxBool isClosingSection = false.obs;
-
   RxInt currentTile = 0.obs;
-
   RxBool showBtnLoop = false.obs;
+  RxInt selectedLoop = 2.obs;
 
-  RxInt selectedLoop = 5.obs;
+  final AudioPlayer audioPlayer = AudioPlayer();
+
   int get numOfLoops => int.parse('$selectedLoop');
 
-  playAudio(AudioPlayer player, Audio audio) async {
+  void playAudio(Audio audio, [int currentLoop = 0]) async {
     isClosingSection.value = true;
     audio.playerState.value = AudioState.play;
 
-    //Source audio
-    Duration time = const Duration();
+    // Source audio
+    await audioPlayer.play(UrlSource(audio.audio));
 
-    for (int i = 0; i < numOfLoops; i++) {
-      await player.play(UrlSource(audio.audio));
-
-      await player.getDuration().then((timeOfAudio) {
-        // Pega o tempo do audio
-        if (timeOfAudio != null) {
-          time = timeOfAudio;
+    audioPlayer.onPlayerComplete.listen(
+      (event) {
+        if (isClosingSection.value == false ||
+            audio.playerState.value == AudioState.stop) {
+          audio.playerState.value = AudioState.stop;
+          audioPlayer.stop();
+        } else if (currentLoop < numOfLoops - 1) {
+          playAudio(audio, currentLoop + 1);
+        } else {
+          audio.playerState.value = AudioState.stop;
+          isClosingSection.value = false;
         }
-      });
-
-      if (isClosingSection.value == false
-          // || audio.playerState.value == AudioState.stop
-          ) {
-        audio.playerState.value = AudioState.stop;
-        player.stop();
-      }
-
-      // Tempo do audio + 1seg
-      await Future.delayed(time + const Duration(seconds: 5)); // 1 or 5
-
-      // isPlaying.value = true;
-
-      // if (i == numberOfLoops) next(tile!);
-    }
-
-    audio.playerState.value = AudioState.stop;
-    isClosingSection.value = false;
+      },
+    );
   }
 
-  stopAudio(AudioPlayer player) {
-    player.stop();
+  void stopAudio() {
+    audioPlayer.stop();
   }
 
   void stopAudios(Pronun pron) {
